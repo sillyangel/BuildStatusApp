@@ -1,9 +1,11 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import SettingsScreen from './components/SettingsScreen';
 import GithubBuildsStack from './components/GithubBuildStack';
+import SetupScreen from './components/SetupScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -33,7 +35,25 @@ function MyTabs() {
   );
 }
 
+
+
 export default function App() {
+  const [isSetupComplete, setIsSetupComplete] = useState(false);
+
+  const fetchifSetupComplete = async () => {
+    const username = await AsyncStorage.getItem('githubUsername');
+    const selectedRepos = JSON.parse(await AsyncStorage.getItem('githubRepos')) || [];
+    setIsSetupComplete(!!username && selectedRepos.length > 0);
+  }
+
+  useEffect(() => {
+    fetchifSetupComplete();
+  }, []);
+
+  if (!isSetupComplete) {
+    return <SetupScreen onSetupComplete={() => setIsSetupComplete(true)} />;
+  }
+
   return (
     <NavigationContainer>
       <MyTabs />

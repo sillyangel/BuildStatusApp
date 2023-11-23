@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "me.sillyangel.githubstatus"
     },
     "android": {
       "adaptiveIcon": {

@@ -1,4 +1,4 @@
-# Repo Build Status Checker App
+# Build Status App
 
 ## Overview
 
@@ -42,8 +42,8 @@ npm install
 
 3. Login With Expo
 
-```basht
-
+```bash
+npx expo login
 ```
 
 4. Run The app:
@@ -72,5 +72,3 @@ This project is licensed under the **MIT License**.
 ## Acknowledgments
 
 Thanks to github rest api for providing the build status information.
-Special thanks to the contributors of this project.
-vbnet
