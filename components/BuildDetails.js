@@ -16,10 +16,9 @@ function BuildDetails({route, navigation }) {
   return (
     <View style={styles.container}>
         <View style={styles.buildInfo}>
-                    <Text style={{ fontSize: 20, fontWeight: '500'}}>{build.repository.full_name}</Text>
+                    <Text style={{ fontSize: 20, fontWeight: '500'}}>{build.display_title}</Text>
                     <Text style={{ fontSize: 20, fontWeight: '500'}}>{durationMinutes}m </Text>
         </View>
-                     <Text style={{ fontSize: 16, fontWeight: '500'}}>{build.display_title}</Text>
         <View style={{ }}>
                     <Text style={{ fontSize: 16, fontWeight: '500'}}>{build.head_commit.author.name}</Text>
                     <Text style={{ fontSize: 16, fontWeight: '500'}}>{build.head_commit.message}</Text>
