@@ -54,7 +54,7 @@ async function validateUsername(username) {
   
     return (
         <View style={styles.container}>
-            <Text style={{ fontSize: 25, fontWeight: 'bold' }}>Welcome</Text>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', marginTop: 12 }}>Welcome</Text>
             <Text style={styles.welcomeMessage}>Please enter your setup information below:</Text>
             <View style={styles.inputContainer}>
                 <Text style={styles.inputLabel}>Github Username</Text>
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        margin: 2,
+        margin: 2
     },
     inputContainer: {
         marginBottom: 50,
