@@ -23,11 +23,6 @@ web-build/
 npm-debug.*
 yarn-debug.*
 yarn-error.*
-config.js/
-./config.js/
-./config.js
-config.js
-/config.js
 
 # macOS
 .DS_Store
@@ -38,3 +33,4 @@ config.js
 
 # typescript
 *.tsbuildinfo
+config.js
