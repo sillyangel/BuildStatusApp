@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import _ from 'lodash';
 import React from 'react';
 import { Text, View, SectionList, StyleSheet, TouchableOpacity } from 'react-native';
-import { token } from '../config';
+import { token } from '../config.mjs';
 
 function GithubBuilds({ navigation }) {
     const [builds, setBuilds] = React.useState(null);
