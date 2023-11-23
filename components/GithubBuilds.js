@@ -2,8 +2,15 @@ import RNPickerSelect from 'react-native-picker-select';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import _ from 'lodash';
 import React from 'react';
-import { Text, View, SectionList, StyleSheet, TouchableOpacity } from 'react-native';
-import { token } from '../config.js';
+import { Text, View, SectionList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+
+import { token } from '@env';
+
+console.log(token)
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function GithubBuilds({ navigation }) {
     const [builds, setBuilds] = React.useState(null);
@@ -25,6 +32,7 @@ function GithubBuilds({ navigation }) {
       const allBuilds = [];
       for (const repo of selectedRepos) {
         const urlgit = `https://api.github.com/repos/${username}/${repo}/actions/runs`;
+        await sleep(2000);
         const response = await fetch(urlgit, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -79,17 +87,17 @@ function GithubBuilds({ navigation }) {
     return (
       <View style={styles.container}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
-        <Text style={{ fontWeight: 700 }} >Filter</Text>
-        <RNPickerSelect style={{width: 100}}
-          onValueChange={(value) => setFilter(value)}
-          items={[
-            { label: 'All', value: 'all' },
-            { label: 'Success', value: 'success' },
-            { label: 'Failure', value: 'failure' }
-          ]}
-          value='all' // Add this line
-          placeholder={{}}
-        />
+          <Text style={{ fontWeight: 700 }} >Filter</Text>
+          <RNPickerSelect style={{width: 100}}
+            onValueChange={(value) => setFilter(value)}
+            items={[
+              { label: 'All', value: 'all' },
+              { label: 'Success', value: 'success' },
+              { label: 'Failure', value: 'failure' }
+            ]}
+            value='all' // Add this line
+            placeholder={{}}
+          />
         </View>
         {builds ? (
           <SectionList
@@ -99,7 +107,7 @@ function GithubBuilds({ navigation }) {
             keyExtractor={(build) => build.id.toString()}
           />
         ) : (
-          <Text>Loading...</Text>
+          <ActivityIndicator size="large" color="#c9c9c9" />
         )}
       </View>
     );

@@ -1,6 +1,6 @@
 import { token } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Text, View, TextInput, Button, StyleSheet, TouchableOpacity} from 'react-native';
+import { Text, View, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import * as React from 'react';
 
 
@@ -19,24 +19,14 @@ async function validateUsername(username) {
   
   
   
-  function SettingsScreen() {
+  const SetupScreen = ({onSetupComplete}) => {
     const [username, setUsername] = React.useState('');
     const [repoName, setRepoName] = React.useState('');
     const [selectedRepos, setSelectedRepos] = React.useState([]);
   
   
-    React.useEffect(() => {
-      const fetchSettings = async () => {
-        const savedUsername = await AsyncStorage.getItem('githubUsername');
-        const savedRepos = JSON.parse(await AsyncStorage.getItem('githubRepos')) || [];
-        setUsername(savedUsername || '');
-        setSelectedRepos(savedRepos);
-      };
   
-      fetchSettings();
-    }, []);
-  
-    const saveSettings = async () => {
+    const saveSettings = async ( ) => {
       try {
         if (!await validateUsername(username)) {
           alert('Invalid username');
@@ -44,7 +34,7 @@ async function validateUsername(username) {
         }
         await AsyncStorage.setItem('githubUsername', username);
         await AsyncStorage.setItem('githubRepos', JSON.stringify(selectedRepos));
-        alert('Settings saved')
+        onSetupComplete();
         console.log('Settings saved')
       } catch (error) {
         console.error(error);
@@ -63,57 +53,60 @@ async function validateUsername(username) {
     };
   
     return (
-      <View style={styles.container}>
-          <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Github Username</Text>
-              <TextInput
-                  value={username}
-                  style={styles.input}
-                  onChangeText={(text) => setUsername(text)}
-                  placeholder={username ? username : "Enter your GitHub username"}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-              />
-          </View>
+        <View style={styles.container}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold' }}>Welcome</Text>
+            <Text style={styles.welcomeMessage}>Please enter your setup information below:</Text>
+            <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Github Username</Text>
+                <TextInput
+                    value={username}
+                    style={styles.input}
+                    onChangeText={(text) => setUsername(text)}
+                    placeholder={username ? username : "Enter your GitHub username"}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                />
+            </View>
 
-          <View style={styles.repoContainer}>
-              <Text style={styles.inputLabel}>Add / Remove Repository</Text>
-                  <View style={styles.inputRow}>
-                      <TextInput
-                          value={repoName}
-                          style={{
-                              fontSize: 18,
-                              borderColor: '#cccccc',
-                              borderWidth: 1,
-                              borderRadius: 5,
-                              padding: 2,
-                              width: '73%',
-                          }}
-                          onChangeText={setRepoName}
-                          placeholder="Enter a github repository name"
-                          autoCapitalize="none"
-                          autoCorrect={false}
-                      />
-                      <Button title="Add Repo" onPress={addRepo} />
-              </View>
-          </View>
-          {selectedRepos.map((repo) => (
-              <View key={repo} style={styles.repoRow}>
-                  <Text>{repo}</Text>
-                  <Button title="-" onPress={() => removeRepo(repo)} />
-              </View>
-          ))}
-          <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={saveSettings}>
-                  <Text style={styles.buttonText}>Save</Text>
-              </TouchableOpacity>
-          </View>
-      </View>
-  );
+            <View style={styles.repoContainer}>
+                <Text style={styles.inputLabel}>Add / Remove Repository</Text>
+                    <View style={styles.inputRow}>
+                        <TextInput
+                            value={repoName}
+                            style={{
+                                fontSize: 18,
+                                borderColor: '#cccccc',
+                                borderWidth: 1,
+                                borderRadius: 5,
+                                padding: 2,
+                                width: '73%',
+                            }}
+                            onChangeText={setRepoName}
+                            placeholder="Enter a github repository name"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                        />
+                        <Button title="Add Repo" onPress={addRepo} />
+                </View>
+            </View>
+            {selectedRepos.map((repo) => (
+                <View key={repo} style={styles.repoRow}>
+                    <Text>{repo}</Text>
+                    <Button title="-" onPress={() => removeRepo(repo)} />
+                </View>
+            ))}
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={saveSettings}>
+                    <Text style={styles.buttonText}>Save</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
   }
 
+    
 
-  const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
@@ -173,4 +166,4 @@ async function validateUsername(username) {
     },
 });
 
-  export default SettingsScreen;
+export default SetupScreen;
