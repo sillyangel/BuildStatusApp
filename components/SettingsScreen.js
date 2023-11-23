@@ -1,6 +1,6 @@
-import { token } from '../config.mjs';
+import { token } from '../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Text, View, TextInput, Button, StyleSheet } from 'react-native';
+import { Text, View, TextInput, Button } from 'react-native';
 import * as React from 'react';
 
 

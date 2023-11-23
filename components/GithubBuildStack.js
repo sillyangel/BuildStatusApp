@@ -17,7 +17,7 @@ function GithubBuildsStack() {
             <Stack.Screen 
                 name="BuildDetails" 
                 component={BuildDetails} 
-                options={{ headerShown: true }} // Hide header for BuildDetails
+                options={{ headerShown: false }} // Hide header for BuildDetails
             />
         </Stack.Navigator>
     );

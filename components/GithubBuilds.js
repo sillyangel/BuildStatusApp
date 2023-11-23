@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import _ from 'lodash';
 import React from 'react';
 import { Text, View, SectionList, StyleSheet, TouchableOpacity } from 'react-native';
-import { token } from '../config.mjs';
+import { token } from '../config.js';
 
 function GithubBuilds({ navigation }) {
     const [builds, setBuilds] = React.useState(null);
@@ -78,7 +78,9 @@ function GithubBuilds({ navigation }) {
   
     return (
       <View style={styles.container}>
-        <RNPickerSelect
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
+        <Text style={{ fontWeight: 700 }} >Filter</Text>
+        <RNPickerSelect style={{width: 100}}
           onValueChange={(value) => setFilter(value)}
           items={[
             { label: 'All', value: 'all' },
@@ -88,6 +90,7 @@ function GithubBuilds({ navigation }) {
           value='all' // Add this line
           placeholder={{}}
         />
+        </View>
         {builds ? (
           <SectionList
             sections={sections}
