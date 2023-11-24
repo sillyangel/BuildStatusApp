@@ -2,6 +2,8 @@ import { token } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, View, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import * as React from 'react';
+import { useTheme } from '@react-navigation/native';
+
 
 
 async function validateUsername(username) {
@@ -20,6 +22,7 @@ async function validateUsername(username) {
   
   
   const SetupScreen = ({onSetupComplete}) => {
+    const { colors } = useTheme();
     const [username, setUsername] = React.useState('');
     const [repoName, setRepoName] = React.useState('');
     const [selectedRepos, setSelectedRepos] = React.useState([]);
@@ -75,7 +78,7 @@ async function validateUsername(username) {
                             value={repoName}
                             style={{
                                 fontSize: 18,
-                                borderColor: '#cccccc',
+                                borderColor: colors.border,
                                 borderWidth: 1,
                                 borderRadius: 5,
                                 padding: 2,
@@ -151,7 +154,7 @@ const styles = StyleSheet.create({
         marginBottom: 36,
     },
     button: {
-        backgroundColor: '#007AFF',
+        backgroundColor: '#222',
         padding: 10,
         borderRadius: 5,
         alignItems: 'center',

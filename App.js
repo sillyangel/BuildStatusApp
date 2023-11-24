@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { useColorScheme } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,10 +10,12 @@ import SetupScreen from './components/SetupScreen';
 
 const Tab = createBottomTabNavigator();
 
+
 function MyTabs() {
   return (
-    <Tab.Navigator>
-      
+    <Tab.Navigator
+      screenOptions={{ headerShown: false, tabBarActiveTintColor: '#222', tabBarInactiveTintColor: 'gray' }}
+    >
       <Tab.Screen 
         name="Builds" 
         component={GithubBuildsStack} 
@@ -29,7 +32,9 @@ function MyTabs() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="ios-settings" color={color} size={size} />
           ),
+          headerShown: true,
         }}
+        
       />
     </Tab.Navigator>
   );
@@ -38,6 +43,7 @@ function MyTabs() {
 
 
 export default function App() {
+  const scheme = useColorScheme();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
 
   const fetchifSetupComplete = async () => {
@@ -55,7 +61,7 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
       <MyTabs />
     </NavigationContainer>
   );

@@ -2,6 +2,8 @@ import { token } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, View, TextInput, Button, StyleSheet, TouchableOpacity} from 'react-native';
 import * as React from 'react';
+import { useTheme } from '@react-navigation/native';
+
 
 
 async function validateUsername(username) {
@@ -20,6 +22,7 @@ async function validateUsername(username) {
   
   
   function SettingsScreen() {
+    const { colors } = useTheme();
     const [username, setUsername] = React.useState('');
     const [repoName, setRepoName] = React.useState('');
     const [selectedRepos, setSelectedRepos] = React.useState([]);
@@ -65,10 +68,10 @@ async function validateUsername(username) {
     return (
       <View style={styles.container}>
           <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Github Username</Text>
+              <Text style={[styles.inputLabel, { color: colors.text}]}>Github Username</Text>
               <TextInput
                   value={username}
-                  style={styles.input}
+                  style={[styles.input, { color: colors.text, borderColor: colors.border}]}
                   onChangeText={(text) => setUsername(text)}
                   placeholder={username ? username : "Enter your GitHub username"}
                   autoCapitalize="none"
@@ -76,14 +79,15 @@ async function validateUsername(username) {
               />
           </View>
 
-          <View style={styles.repoContainer}>
-              <Text style={styles.inputLabel}>Add / Remove Repository</Text>
+          <View style={[styles.repoContainer, { Text: colors.text }]}>
+              <Text style={[styles.inputLabel, { color: colors.text }]}>Add / Remove Repository</Text>
                   <View style={styles.inputRow}>
                       <TextInput
                           value={repoName}
                           style={{
                               fontSize: 18,
-                              borderColor: '#cccccc',
+                              borderColor: colors.border,
+                              color: colors.text,
                               borderWidth: 1,
                               borderRadius: 5,
                               padding: 2,
@@ -94,24 +98,28 @@ async function validateUsername(username) {
                           autoCapitalize="none"
                           autoCorrect={false}
                       />
-                      <Button title="Add Repo" onPress={addRepo} />
+              <TouchableOpacity style={{backgroundColor: colors.primary, paddingLeft: 10, paddingRight: 10, paddingBottom: 3, paddingTop: 3, borderRadius: 5, alignItems: 'center',}} onPress={addRepo}>
+                      <Text style={styles.buttonText}>+</Text>
+              </TouchableOpacity>
               </View>
           </View>
           {selectedRepos.map((repo) => (
-              <View key={repo} style={styles.repoRow}>
-                  <Text>{repo}</Text>
-                  <Button title="-" onPress={() => removeRepo(repo)} />
+              <View key={repo} style={[styles.repoRow, { borderColor: colors.border}]}>
+                  <Text style={{ fontSize: 20, color: colors.text}}>{repo}</Text>
+                  <TouchableOpacity style={{backgroundColor: colors.primary, marginLeft: 15 , paddingLeft: 5, paddingRight: 5, paddingBottom: 0.5, paddingTop: 0.5, borderRadius: 5, alignItems: 'center',}} onPress={() => removeRepo(repo)}>
+                      <Text style={styles.buttonText}>-</Text>
+              </TouchableOpacity>
               </View>
           ))}
           <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={saveSettings}>
+              <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary}]} onPress={saveSettings}>
                   <Text style={styles.buttonText}>Save</Text>
               </TouchableOpacity>
           </View>
       </View>
   );
+                   
   }
-
 
   const styles = StyleSheet.create({
     container: {
@@ -119,12 +127,10 @@ async function validateUsername(username) {
         padding: 20,
         margin: 2,
     },
-    inputContainer: {
-        marginBottom: 50,
-    },
     inputRow: {
         flexDirection: 'row',
         alignItems: 'center',
+        marginBottom: 3
     },
     addrepocontainer: {
         flex: 1,
@@ -134,12 +140,10 @@ async function validateUsername(username) {
     inputLabel: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 2,
     },
     input: {
         fontSize: 18,
-        borderColor: '#cccccc',
-        borderWidth: 1,
+        borderWidth: 0.5,
         borderRadius: 5,
         padding: 2,
         width: '100%',
@@ -158,11 +162,10 @@ async function validateUsername(username) {
         marginBottom: 36,
     },
     button: {
-        backgroundColor: '#007AFF',
         padding: 10,
         borderRadius: 5,
         alignItems: 'center',
-      },
+    },
       buttonText: {
         color: '#fff',
         fontSize: 18,
@@ -170,7 +173,13 @@ async function validateUsername(username) {
     repoRow: {
         flexDirection: 'row',
         alignItems: 'center',
+        borderWidth: 2,
+        borderRadius: 5,
+        padding: 5,
     },
-});
+  });
+
+
+  
 
   export default SettingsScreen;

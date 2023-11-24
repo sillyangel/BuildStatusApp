@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import _ from 'lodash';
 import React from 'react';
 import { Text, View, SectionList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useTheme } from '@react-navigation/native';
 
 import { token } from '@env';
 
@@ -13,6 +14,7 @@ function sleep(ms) {
 }
 
 function GithubBuilds({ navigation }) {
+    const { colors } = useTheme();
     const [builds, setBuilds] = React.useState(null);
     const [filter, setFilter] = React.useState('all');
   
@@ -32,7 +34,6 @@ function GithubBuilds({ navigation }) {
       const allBuilds = [];
       for (const repo of selectedRepos) {
         const urlgit = `https://api.github.com/repos/${username}/${repo}/actions/runs`;
-        await sleep(2000);
         const response = await fetch(urlgit, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -62,11 +63,11 @@ function GithubBuilds({ navigation }) {
   
       return (
         <TouchableOpacity onPress={() => navigation.navigate('BuildDetails', { build })}>
-            <View style={[styles.build, { backgroundColor: build.conclusion === 'success' ? '#cdcd' : build.conclusion === 'failure' ? '#ddcccc' : '#dcddcc' }]}>
+            <View style={[styles.build, { backgroundColor: colors.border }]}>
                 <View style={[styles.status, { backgroundColor: build.conclusion === 'success' ? 'green' : build.conclusion === 'failure' ? 'red' : 'yellow' }]} />
                 <View style={styles.buildInfo}>
-                    <Text>{build.name}</Text>
-                    <Text>{durationMinutes}m </Text>
+                    <Text style={[styles.buildtext, { color: colors.text }]}>{build.name}</Text>
+                    <Text style={[styles.buildtext, { color: colors.text }]}>{durationMinutes}m </Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -74,7 +75,7 @@ function GithubBuilds({ navigation }) {
     };
   
     const renderSectionHeader = ({ section: { title } }) => (
-      <Text style={styles.header}>{title}</Text>
+      <Text style={[styles.header, { color: colors.text }]}>{title}</Text>
     );
   
     const groupedBuilds = _.groupBy(filteredBuilds, 'repository.name');
@@ -85,10 +86,10 @@ function GithubBuilds({ navigation }) {
     }));
   
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.background}]}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
-          <Text style={{ fontWeight: 700 }} >Filter</Text>
-          <RNPickerSelect style={{width: 100}}
+          <Text style={{ fontWeight: 700, color: colors.text }} >Filter</Text>
+          <RNPickerSelect style={{width: 100, inputIOS: { color: colors.text }, inputAndroid: { color: colors.text },}}
             onValueChange={(value) => setFilter(value)}
             items={[
               { label: 'All', value: 'all' },
@@ -131,6 +132,11 @@ function GithubBuilds({ navigation }) {
       padding: 10, // space around the text and status
       margin: 5, // space between each bubble
       width: '97%',
+      height: 40,
+    },
+    buildtext: {
+      fontWeight: '500',
+      fontSize: 16
     },
     buildInfo: {
       flexDirection: 'row',
@@ -138,9 +144,9 @@ function GithubBuilds({ navigation }) {
       flex: 1,
     },
     status: {
-      width: 10,
-      height: 10,
-      borderRadius: 5,
+      width: 12,
+      height: 12,
+      borderRadius: 7,
       marginRight: 10,
     },
     avatar: {
