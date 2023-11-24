@@ -82,7 +82,7 @@ async function validateUsername(username) {
   
     return (
         <View style={[styles.container, { backgroundColor: colors.background}]}>
-            <Text style={[styles.welcomeMessage, {color: colors.text, marginTop: 12,}]}>Please enter your setup information below:</Text>
+            <Text style={[styles.welcomeMessage, {color: colors.text, marginTop: 22,}]}>Please enter your setup information below:</Text>
             <View style={styles.inputContainer}>
                 <Text style={[styles.inputLabel, {color: colors.text}]}>Github Username</Text>
                 <TextInput
@@ -127,7 +127,7 @@ async function validateUsername(username) {
                     <View key={repo} style={styles.repoRow}>
                       <Text style={{ fontSize: 20, color: colors.text }}>{repo}</Text>
                       <TouchableOpacity style={{backgroundColor: 'rgba(256, 256, 256, 0)', marginLeft: 15 , paddingLeft: 5, paddingRight: 5, paddingBottom: 0.5, paddingTop: 0.5, borderRadius: 5, alignItems: 'center',}} onPress={() => removeRepo(repo)}>
-                        <Text style={styles.buttonText}>-</Text>
+                        <Text style={{color: colors.text}}>-</Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -135,7 +135,7 @@ async function validateUsername(username) {
               </View>
           <View style={styles.buttonContainer}>
               <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary}]} onPress={saveSettings}>
-                  <Text style={styles.buttonText}>Done</Text>
+                  <Text style={[styles.buttonText, { color: '#fff' }]}>Done</Text>
               </TouchableOpacity>
           </View>
         </View>
@@ -189,8 +189,8 @@ async function validateUsername(username) {
         alignItems: 'center',
     },
       buttonText: {
-        color: '#fff',
         fontSize: 18,
+        color: '#fff',
     },  
     repoRow: {
         flexDirection: 'row',

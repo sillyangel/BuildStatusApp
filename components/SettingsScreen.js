@@ -119,7 +119,7 @@ async function validateUsername(username) {
                     <View key={repo} style={styles.repoRow}>
                       <Text style={{ fontSize: 20, color: colors.text }}>{repo}</Text>
                       <TouchableOpacity style={{backgroundColor: 'rgba(256, 256, 256, 0)', marginLeft: 15 , paddingLeft: 5, paddingRight: 5, paddingBottom: 0.5, paddingTop: 0.5, borderRadius: 5, alignItems: 'center',}} onPress={() => removeRepo(repo)}>
-                        <Text style={styles.buttonText}>-</Text>
+                        <Text style={[styles.buttonText, { color: colors.text }]}>-</Text>
                       </TouchableOpacity>
                     </View>
                   )}
