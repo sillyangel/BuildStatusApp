@@ -9,16 +9,8 @@ const Stack = createStackNavigator();
 function GithubBuildsStack() {
     return (
         <Stack.Navigator>
-            <Stack.Screen 
-                name="GithubBuilds" 
-                component={GithubBuilds} 
-                options={{ headerShown: false }} // Hide header for GithubBuilds
-            />
-            <Stack.Screen 
-                name="BuildDetails" 
-                component={BuildDetails} 
-                options={{ headerShown: false }} // Hide header for BuildDetails
-            />
+            <Stack.Screen name="GithubBuilds" component={GithubBuilds} />
+            <Stack.Screen name="BuildDetails" component={BuildDetails} />
         </Stack.Navigator>
     );
 }

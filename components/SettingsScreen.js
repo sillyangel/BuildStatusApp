@@ -1,7 +1,9 @@
 import { token } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Text, View, TextInput, Button, StyleSheet, TouchableOpacity} from 'react-native';
+import { Text, View, TextInput, Button, StyleSheet, TouchableOpacity, SectionList} from 'react-native';
 import * as React from 'react';
+import { useTheme } from '@react-navigation/native';
+
 
 
 async function validateUsername(username) {
@@ -20,10 +22,19 @@ async function validateUsername(username) {
   
   
   function SettingsScreen() {
+    const { colors } = useTheme();
     const [username, setUsername] = React.useState('');
     const [repoName, setRepoName] = React.useState('');
     const [selectedRepos, setSelectedRepos] = React.useState([]);
   
+    const sections = selectedRepos.reduce((result, repo, index) => {
+      const sectionIndex = Math.floor(index / 7); // Create a new section every 7 items
+      if (!result[sectionIndex]) {
+        result[sectionIndex] = { data: [] };
+      }
+      result[sectionIndex].data.push(repo);
+      return result;
+    }, []);
   
     React.useEffect(() => {
       const fetchSettings = async () => {
@@ -65,10 +76,10 @@ async function validateUsername(username) {
     return (
       <View style={styles.container}>
           <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Github Username</Text>
+              <Text style={[styles.inputLabel, { color: colors.text}]}>Github Username</Text>
               <TextInput
                   value={username}
-                  style={styles.input}
+                  style={[styles.input, { color: colors.text, borderColor: colors.border}]}
                   onChangeText={(text) => setUsername(text)}
                   placeholder={username ? username : "Enter your GitHub username"}
                   autoCapitalize="none"
@@ -76,14 +87,15 @@ async function validateUsername(username) {
               />
           </View>
 
-          <View style={styles.repoContainer}>
-              <Text style={styles.inputLabel}>Add / Remove Repository</Text>
+          <View style={[styles.repoContainer, { Text: colors.text }]}>
+              <Text style={[styles.inputLabel, { color: colors.text }]}>Add / Remove Repository</Text>
                   <View style={styles.inputRow}>
                       <TextInput
                           value={repoName}
                           style={{
                               fontSize: 18,
-                              borderColor: '#cccccc',
+                              borderColor: colors.border,
+                              color: colors.text,
                               borderWidth: 1,
                               borderRadius: 5,
                               padding: 2,
@@ -94,24 +106,34 @@ async function validateUsername(username) {
                           autoCapitalize="none"
                           autoCorrect={false}
                       />
-                      <Button title="Add Repo" onPress={addRepo} />
+              <TouchableOpacity style={{backgroundColor: colors.primary, paddingLeft: 7, paddingRight: 7, marginLeft: 4,paddingBottom: 4, paddingTop: 3, borderRadius: 4, alignItems: 'center',}} onPress={addRepo}>
+                      <Text style={{color: '#fff', fontSize: 17,}}>Add Repo</Text>
+              </TouchableOpacity>
               </View>
           </View>
-          {selectedRepos.map((repo) => (
-              <View key={repo} style={styles.repoRow}>
-                  <Text>{repo}</Text>
-                  <Button title="-" onPress={() => removeRepo(repo)} />
+          <View style={[styles.container, { backgroundColor: colors.background, borderColor: colors.border, borderWidth: selectedRepos.length > 0 ? 2 : 0, borderRadius: 5, padding: 12 }]}>
+                <SectionList
+                  sections={sections}
+                  keyExtractor={(item, index) => item + index}
+                  renderItem={({ item: repo }) => (
+                    <View key={repo} style={styles.repoRow}>
+                      <Text style={{ fontSize: 20, color: colors.text }}>{repo}</Text>
+                      <TouchableOpacity style={{backgroundColor: 'rgba(256, 256, 256, 0)', marginLeft: 15 , paddingLeft: 5, paddingRight: 5, paddingBottom: 0.5, paddingTop: 0.5, borderRadius: 5, alignItems: 'center',}} onPress={() => removeRepo(repo)}>
+                        <Text style={[styles.buttonText, { color: colors.text }]}>-</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                />
               </View>
-          ))}
           <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={saveSettings}>
+              <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary}]} onPress={saveSettings}>
                   <Text style={styles.buttonText}>Save</Text>
               </TouchableOpacity>
           </View>
       </View>
   );
+                   
   }
-
 
   const styles = StyleSheet.create({
     container: {
@@ -119,12 +141,10 @@ async function validateUsername(username) {
         padding: 20,
         margin: 2,
     },
-    inputContainer: {
-        marginBottom: 50,
-    },
     inputRow: {
         flexDirection: 'row',
         alignItems: 'center',
+        marginBottom: 3
     },
     addrepocontainer: {
         flex: 1,
@@ -134,12 +154,10 @@ async function validateUsername(username) {
     inputLabel: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 2,
     },
     input: {
         fontSize: 18,
-        borderColor: '#cccccc',
-        borderWidth: 1,
+        borderWidth: 0.5,
         borderRadius: 5,
         padding: 2,
         width: '100%',
@@ -158,11 +176,10 @@ async function validateUsername(username) {
         marginBottom: 36,
     },
     button: {
-        backgroundColor: '#007AFF',
         padding: 10,
         borderRadius: 5,
         alignItems: 'center',
-      },
+    },
       buttonText: {
         color: '#fff',
         fontSize: 18,
@@ -170,7 +187,11 @@ async function validateUsername(username) {
     repoRow: {
         flexDirection: 'row',
         alignItems: 'center',
+        padding: 5
     },
-});
+  });
+
+
+  
 
   export default SettingsScreen;
