@@ -2,7 +2,6 @@ import { token } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Text, View, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import * as React from 'react';
-import { useTheme } from '@react-navigation/native';
 
 
 
@@ -21,12 +20,29 @@ async function validateUsername(username) {
   
   
   
-  const SetupScreen = ({onSetupComplete}) => {
-    const { colors } = useTheme();
+  const SetupScreen = ({onSetupComplete, theme}) => {
+    const { colors } = theme;
     const [username, setUsername] = React.useState('');
     const [repoName, setRepoName] = React.useState('');
     const [selectedRepos, setSelectedRepos] = React.useState([]);
+    const [showWelcome, setShowWelcome] = React.useState(true);
   
+
+
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowWelcome(false);
+        }, 3000);
+        return () => clearTimeout(timer);
+    }, []);
+
+    if (showWelcome) {
+        return (
+            <View style={[styles.container, { backgroundColor: colors.background }]}>
+                <Text style={{ fontSize: 25, fontWeight: 'bold', marginTop: 12, color: colors.text }}>Welcome</Text>
+      </View>
+        );
+    }
   
   
     const saveSettings = async ( ) => {
@@ -56,71 +72,75 @@ async function validateUsername(username) {
     };
   
     return (
-        <View style={styles.container}>
-            <Text style={{ fontSize: 25, fontWeight: 'bold', marginTop: 12 }}>Welcome</Text>
-            <Text style={styles.welcomeMessage}>Please enter your setup information below:</Text>
+        <View style={[styles.container, { backgroundColor: colors.background}]}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', marginTop: 12, color: colors.text }}>Welcome</Text>
+            <Text style={[styles.welcomeMessage, {color: colors.text}]}>Please enter your setup information below:</Text>
             <View style={styles.inputContainer}>
-                <Text style={styles.inputLabel}>Github Username</Text>
+                <Text style={[styles.inputLabel, {color: colors.text}]}>Github Username</Text>
                 <TextInput
-                    value={username}
-                    style={styles.input}
-                    onChangeText={(text) => setUsername(text)}
-                    placeholder={username ? username : "Enter your GitHub username"}
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                />
+                  value={username}
+                  style={[styles.input, { color: colors.text, borderColor: colors.border}]}
+                  onChangeText={(text) => setUsername(text)}
+                  placeholder={username ? username : "Enter your GitHub username"}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+              />
             </View>
 
-            <View style={styles.repoContainer}>
-                <Text style={styles.inputLabel}>Add / Remove Repository</Text>
-                    <View style={styles.inputRow}>
-                        <TextInput
-                            value={repoName}
-                            style={{
-                                fontSize: 18,
-                                borderColor: colors.border,
-                                borderWidth: 1,
-                                borderRadius: 5,
-                                padding: 2,
-                                width: '73%',
-                            }}
-                            onChangeText={setRepoName}
-                            placeholder="Enter a github repository name"
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                        />
-                        <Button title="Add Repo" onPress={addRepo} />
-                </View>
-            </View>
-            {selectedRepos.map((repo) => (
-                <View key={repo} style={styles.repoRow}>
-                    <Text>{repo}</Text>
-                    <Button title="-" onPress={() => removeRepo(repo)} />
-                </View>
-            ))}
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={saveSettings}>
-                    <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
-            </View>
+            <View style={[styles.repoContainer, { Text: colors.text }]}>
+              <Text style={[styles.inputLabel, { color: colors.text }]}>Add / Remove Repository</Text>
+                  <View style={styles.inputRow}>
+                      <TextInput
+                          value={repoName}
+                          style={{
+                              fontSize: 18,
+                              borderColor: colors.border,
+                              color: colors.text,
+                              borderWidth: 1,
+                              borderRadius: 5,
+                              padding: 2,
+                              width: '73%',
+                          }}
+                          onChangeText={setRepoName}
+                          placeholder="Enter a github repository name"
+                          autoCapitalize="none"
+                          autoCorrect={false}
+                      />
+              <TouchableOpacity style={{backgroundColor: colors.primary, paddingLeft: 10, paddingRight: 10, paddingBottom: 3, paddingTop: 3, borderRadius: 5, alignItems: 'center',}} onPress={addRepo}>
+                      <Text style={styles.buttonText}>+</Text>
+              </TouchableOpacity>
+              </View>
+          </View>
+          <View style={{ borderColor: colors.border, borderWidth: 2, borderRadius: 5, padding: 5}}>
+          {selectedRepos.map((repo) => (
+              <View key={repo} style={styles.repoRow}>
+                  <Text style={{ fontSize: 20, color: colors.text}}>{repo}</Text>
+                  <TouchableOpacity style={{backgroundColor: colors.primary, marginLeft: 15 , paddingLeft: 5, paddingRight: 5, paddingBottom: 0.5, paddingTop: 0.5, borderRadius: 5, alignItems: 'center',}} onPress={() => removeRepo(repo)}>
+                      <Text style={styles.buttonText}>-</Text>
+              </TouchableOpacity>
+              </View>
+          ))}
+          </View>
+          <View style={styles.buttonContainer}>
+              <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary}]} onPress={saveSettings}>
+                  <Text style={styles.buttonText}>Done</Text>
+              </TouchableOpacity>
+          </View>
         </View>
     );
   }
 
     
 
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
-        margin: 2
-    },
-    inputContainer: {
-        marginBottom: 50,
+        padding: 22,
     },
     inputRow: {
         flexDirection: 'row',
         alignItems: 'center',
+        marginBottom: 3
     },
     addrepocontainer: {
         flex: 1,
@@ -130,12 +150,10 @@ const styles = StyleSheet.create({
     inputLabel: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 2,
     },
     input: {
         fontSize: 18,
-        borderColor: '#cccccc',
-        borderWidth: 1,
+        borderWidth: 0.5,
         borderRadius: 5,
         padding: 2,
         width: '100%',
@@ -154,11 +172,10 @@ const styles = StyleSheet.create({
         marginBottom: 36,
     },
     button: {
-        backgroundColor: '#222',
         padding: 10,
         borderRadius: 5,
         alignItems: 'center',
-      },
+    },
       buttonText: {
         color: '#fff',
         fontSize: 18,
@@ -166,7 +183,8 @@ const styles = StyleSheet.create({
     repoRow: {
         flexDirection: 'row',
         alignItems: 'center',
+        padding: 5
     },
-});
+  });
 
 export default SetupScreen;

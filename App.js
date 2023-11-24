@@ -82,8 +82,8 @@ export default function App() {
     fetchifSetupComplete();
   }, []);
 
-  if (!isSetupComplete) {
-    return <SetupScreen onSetupComplete={() => setIsSetupComplete(true)} />;
+  if (isSetupComplete) {
+    return <SetupScreen onSetupComplete={() => setIsSetupComplete(true)} theme={scheme === 'dark' ? DarkTheme : LightTheme} />;
   }
 
   return (
