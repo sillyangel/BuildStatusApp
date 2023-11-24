@@ -103,14 +103,16 @@ async function validateUsername(username) {
               </TouchableOpacity>
               </View>
           </View>
+          <View style={{ borderColor: colors.border, borderWidth: 2, borderRadius: 5, padding: 5}}>
           {selectedRepos.map((repo) => (
-              <View key={repo} style={[styles.repoRow, { borderColor: colors.border}]}>
+              <View key={repo} style={styles.repoRow}>
                   <Text style={{ fontSize: 20, color: colors.text}}>{repo}</Text>
                   <TouchableOpacity style={{backgroundColor: colors.primary, marginLeft: 15 , paddingLeft: 5, paddingRight: 5, paddingBottom: 0.5, paddingTop: 0.5, borderRadius: 5, alignItems: 'center',}} onPress={() => removeRepo(repo)}>
                       <Text style={styles.buttonText}>-</Text>
               </TouchableOpacity>
               </View>
           ))}
+          </View>
           <View style={styles.buttonContainer}>
               <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary}]} onPress={saveSettings}>
                   <Text style={styles.buttonText}>Save</Text>
@@ -173,9 +175,7 @@ async function validateUsername(username) {
     repoRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        borderWidth: 2,
-        borderRadius: 5,
-        padding: 5,
+        padding: 5
     },
   });
 

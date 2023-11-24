@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { NavigationContainer, useTheme } from '@react-navigation/native';
 import { useColorScheme } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,11 +10,37 @@ import SetupScreen from './components/SetupScreen';
 
 const Tab = createBottomTabNavigator();
 
+const LightTheme = {
+  dark: false,
+  colors: {
+    primary: 'tomato',
+    background: '#fff',
+    card: '#fff',
+    text: '#2c2c2c',
+    border: 'lightgray',
+    notification: 'rgb(255, 69, 58)',
+  },
+};
+
+const DarkTheme = {
+  dark: true,
+  colors: {
+    primary: 'tomato',
+    background: '#2f2f2f',
+    card: '#222',
+    text: '#fff',
+    border: '#555',
+    notification: 'rgb(255, 69, 58)',
+  },
+};
+
+
 
 function MyTabs() {
+  const { colors } = useTheme();
   return (
     <Tab.Navigator
-      screenOptions={{ headerShown: false, tabBarActiveTintColor: '#222', tabBarInactiveTintColor: 'gray' }}
+      screenOptions={{ headerShown: false, tabBarActiveTintColor: colors.primary, tabBarInactiveTintColor: 'gray' }}
     >
       <Tab.Screen 
         name="Builds" 
@@ -61,7 +87,7 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <NavigationContainer theme={scheme === 'dark' ? DarkTheme : LightTheme}>
       <MyTabs />
     </NavigationContainer>
   );
