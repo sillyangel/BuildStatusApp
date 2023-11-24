@@ -1,6 +1,6 @@
 import { token } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Text, View, TextInput, Button, StyleSheet, TouchableOpacity} from 'react-native';
+import { Text, View, TextInput, Button, StyleSheet, TouchableOpacity, SectionList} from 'react-native';
 import * as React from 'react';
 import { useTheme } from '@react-navigation/native';
 
@@ -27,6 +27,14 @@ async function validateUsername(username) {
     const [repoName, setRepoName] = React.useState('');
     const [selectedRepos, setSelectedRepos] = React.useState([]);
   
+    const sections = selectedRepos.reduce((result, repo, index) => {
+      const sectionIndex = Math.floor(index / 7); // Create a new section every 7 items
+      if (!result[sectionIndex]) {
+        result[sectionIndex] = { data: [] };
+      }
+      result[sectionIndex].data.push(repo);
+      return result;
+    }, []);
   
     React.useEffect(() => {
       const fetchSettings = async () => {
@@ -98,21 +106,25 @@ async function validateUsername(username) {
                           autoCapitalize="none"
                           autoCorrect={false}
                       />
-              <TouchableOpacity style={{backgroundColor: colors.primary, paddingLeft: 10, paddingRight: 10, paddingBottom: 3, paddingTop: 3, borderRadius: 5, alignItems: 'center',}} onPress={addRepo}>
-                      <Text style={styles.buttonText}>+</Text>
+              <TouchableOpacity style={{backgroundColor: colors.primary, paddingLeft: 7, paddingRight: 7, marginLeft: 4,paddingBottom: 4, paddingTop: 3, borderRadius: 4, alignItems: 'center',}} onPress={addRepo}>
+                      <Text style={{color: '#fff', fontSize: 17,}}>Add Repo</Text>
               </TouchableOpacity>
               </View>
           </View>
-          <View style={{ borderColor: colors.border, borderWidth: 2, borderRadius: 5, padding: 5}}>
-          {selectedRepos.map((repo) => (
-              <View key={repo} style={styles.repoRow}>
-                  <Text style={{ fontSize: 20, color: colors.text}}>{repo}</Text>
-                  <TouchableOpacity style={{backgroundColor: colors.primary, marginLeft: 15 , paddingLeft: 5, paddingRight: 5, paddingBottom: 0.5, paddingTop: 0.5, borderRadius: 5, alignItems: 'center',}} onPress={() => removeRepo(repo)}>
-                      <Text style={styles.buttonText}>-</Text>
-              </TouchableOpacity>
+          <View style={[styles.container, { backgroundColor: colors.background, borderColor: colors.border, borderWidth: selectedRepos.length > 0 ? 2 : 0, borderRadius: 5, padding: 12 }]}>
+                <SectionList
+                  sections={sections}
+                  keyExtractor={(item, index) => item + index}
+                  renderItem={({ item: repo }) => (
+                    <View key={repo} style={styles.repoRow}>
+                      <Text style={{ fontSize: 20, color: colors.text }}>{repo}</Text>
+                      <TouchableOpacity style={{backgroundColor: 'rgba(256, 256, 256, 0)', marginLeft: 15 , paddingLeft: 5, paddingRight: 5, paddingBottom: 0.5, paddingTop: 0.5, borderRadius: 5, alignItems: 'center',}} onPress={() => removeRepo(repo)}>
+                        <Text style={styles.buttonText}>-</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                />
               </View>
-          ))}
-          </View>
           <View style={styles.buttonContainer}>
               <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary}]} onPress={saveSettings}>
                   <Text style={styles.buttonText}>Save</Text>
