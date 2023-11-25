@@ -4,16 +4,17 @@ import _ from 'lodash';
 import React from 'react';
 import { Text, View, SectionList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useTheme } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
-import { token } from '@env';
+import { githubtoken, altassiantoken, gitlabtoken } from '@env';
 
-console.log(token)
+console.log(githubtoken)
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function GithubBuilds({ navigation }) {
+function Builds({ navigation }) {
     const { colors } = useTheme();
     const [builds, setBuilds] = React.useState(null);
     const [filter, setFilter] = React.useState('all');
@@ -26,7 +27,7 @@ function GithubBuilds({ navigation }) {
       }
     }) : null;
   
-    const fetchBuilds = async () => {
+    const fetchGitHubBuilds = async () => {
       const username = await AsyncStorage.getItem('githubUsername');
       let selectedRepos = await AsyncStorage.getItem('githubRepos');
       selectedRepos = selectedRepos ? JSON.parse(selectedRepos) : [];
@@ -36,23 +37,33 @@ function GithubBuilds({ navigation }) {
         const urlgit = `https://api.github.com/repos/${username}/${repo}/actions/runs`;
         const response = await fetch(urlgit, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${githubtoken}`,
             Accept: 'application/vnd.github.v3+json',
           },
         });
         const data = await response.json();
         console.log("Url: ",urlgit)
-        allBuilds.push(...data.workflow_runs);
+        const buildsWithIcon = data.workflow_runs.map((build => ({ ...build, icon: 'github-square' })));
+        allBuilds.push(...buildsWithIcon);
       }
   
       setBuilds(allBuilds);
     };
   
+    const fetchAllBuilds = async () => {
+      const githubBuilds = await fetchGitHubBuilds();
+      const gitlabBuilds = await fetchGitLabBuilds();
+    
+      const combinedBuilds = [...githubBuilds, ...gitlabBuilds];
+      setBuilds(combinedBuilds);
+    };
+    
     React.useEffect(() => {
-      fetchBuilds();
-      const intervalId = setInterval(fetchBuilds, 30 * 1000);
+      fetchAllBuilds();
+      const intervalId = setInterval(fetchAllBuilds, 30 * 1000);
       return () => clearInterval(intervalId);
     }, []);
+    
   
   
     const renderItem = ({ item: build }) => {
@@ -61,22 +72,28 @@ function GithubBuilds({ navigation }) {
       const durationMs = endTime - startTime;
       const durationMinutes = Math.round(durationMs / 1000 / 60);
   
-      return (
-        <TouchableOpacity onPress={() => navigation.navigate('BuildDetails', { build })}>
+        return (
+          <TouchableOpacity onPress={() => navigation.navigate('BuildDetails', { build })}>
             <View style={[styles.build, { backgroundColor: colors.border }]}>
-                <View style={[styles.status, { backgroundColor: build.conclusion === 'success' ? 'green' : build.conclusion === 'failure' ? 'red' : 'yellow' }]} />
-                <View style={styles.buildInfo}>
-                    <Text style={[styles.buildtext, { color: colors.text }]}>{build.name}</Text>
-                    <Text style={[styles.buildtext, { color: colors.text }]}>{durationMinutes}m </Text>
+              <View style={[styles.status, { backgroundColor: build.conclusion === 'success' ? 'green' : build.conclusion === 'failure' ? 'red' : 'yellow' }]} />
+              <View style={styles.buildInfo}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, marginLeft: 4 }}>
+                  <Text style={[styles.buildtext, { color: colors.text }]}>{build.name}</Text>
+                  <Text style={[styles.buildtext, { color: colors.text }]}>{durationMinutes}m </Text>
                 </View>
+              </View>
             </View>
-        </TouchableOpacity>
-      );
+          </TouchableOpacity>
+        );
     };
   
-    const renderSectionHeader = ({ section: { title } }) => (
-      <Text style={[styles.header, { color: colors.text }]}>{title}</Text>
+    const renderSectionHeader = ({ section: { title, data } }) => (
+      <View style={{ flexDirection: 'row', alignItems: 'center', margin: 10 }}>
+        <Icon name={data[0].icon === 'github-square' ? 'github-square' : 'gitlab'} size={20} color="#000000" />
+        <Text style={[styles.header, { color: colors.text }]}>{title}</Text>
+      </View>
     );
+    
   
     const groupedBuilds = _.groupBy(filteredBuilds, 'repository.name');
   
@@ -147,7 +164,7 @@ function GithubBuilds({ navigation }) {
       width: 12,
       height: 12,
       borderRadius: 7,
-      marginRight: 10,
+      marginRight: 4,
     },
     avatar: {
       width: 50,
@@ -160,4 +177,4 @@ function GithubBuilds({ navigation }) {
     }
   });
 
-  export default GithubBuilds;
+  export default Builds;

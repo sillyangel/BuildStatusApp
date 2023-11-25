@@ -2,14 +2,14 @@
 
 import { createStackNavigator } from '@react-navigation/stack';
 import BuildDetails from './BuildDetails';
-import GithubBuilds from './GithubBuilds';
+import Buildss from './Buildss';
 
 const Stack = createStackNavigator();
 
 function GithubBuildsStack() {
     return (
         <Stack.Navigator>
-            <Stack.Screen name="GithubBuilds" component={GithubBuilds} />
+            <Stack.Screen name="Builds" component={Buildss} />
             <Stack.Screen name="BuildDetails" component={BuildDetails} />
         </Stack.Navigator>
     );
