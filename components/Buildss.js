@@ -27,6 +27,10 @@ function Builds({ navigation }) {
       }
     }) : null;
   
+
+    
+
+
     const fetchGitHubBuilds = async () => {
       const username = await AsyncStorage.getItem('githubUsername');
       let selectedRepos = await AsyncStorage.getItem('githubRepos');
@@ -49,10 +53,36 @@ function Builds({ navigation }) {
   
       setBuilds(allBuilds);
     };
-  
+    
+    
+    const fetchGitLabBuilds = async () => {
+      let selectedRepos = await AsyncStorage.getItem('githubRepos');
+      selectedRepos = selectedRepos ? JSON.parse(selectedRepos) : [];
+    
+      const allBuilds = [];
+    
+      for (const repo of selectedRepos) {
+        // Fetch GitLab builds
+        const gitlabUrl = `https://gitlab.example.com/api/v4/projects/${repo}/pipelines`;
+        const gitlabResponse = await fetch(gitlabUrl, {
+          headers: {
+            Authorization: `Bearer ${gitlabtoken}`,
+          },
+        });
+        const gitlabData = await gitlabResponse.json();
+        const gitlabBuildsWithIcon = gitlabData.map((build) => ({ ...build, icon: 'gitlab' }));
+        allBuilds.push(...gitlabBuildsWithIcon);
+      }
+    
+      setBuilds(allBuilds);
+    };
+    
+
+
     const fetchAllBuilds = async () => {
       const githubBuilds = await fetchGitHubBuilds();
       const gitlabBuilds = await fetchGitLabBuilds();
+      
     
       const combinedBuilds = [...githubBuilds, ...gitlabBuilds];
       setBuilds(combinedBuilds);
@@ -130,7 +160,6 @@ function Builds({ navigation }) {
       </View>
     );
   }
-
   const styles = StyleSheet.create({
     container: {
       flex: 1,
