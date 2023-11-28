@@ -1,6 +1,6 @@
 import RNPickerSelect from 'react-native-picker-select';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import _ from 'lodash';
+import _, { set } from 'lodash';
 import React from 'react';
 import { Text, View, SectionList, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useTheme } from '@react-navigation/native';
@@ -56,24 +56,24 @@ function Builds({ navigation }) {
     
     
     const fetchGitLabBuilds = async () => {
+      const username = await AsyncStorage.getItem('githubUsername');
       let selectedRepos = await AsyncStorage.getItem('githubRepos');
       selectedRepos = selectedRepos ? JSON.parse(selectedRepos) : [];
-    
+      console.log("Selected Repos: ",selectedRepos)
       const allBuilds = [];
-    
       for (const repo of selectedRepos) {
-        // Fetch GitLab builds
-        const gitlabUrl = `https://gitlab.example.com/api/v4/projects/${repo}/pipelines`;
-        const gitlabResponse = await fetch(gitlabUrl, {
+        const urlgit = `https://api.github.com/repos/${username}/sillyangel.github.io/actions/runs`;
+        const response = await fetch(urlgit, {
           headers: {
-            Authorization: `Bearer ${gitlabtoken}`,
+            Authorization: `Bearer ${githubtoken}`,
+            Accept: 'application/vnd.github.v3+json',
           },
         });
-        const gitlabData = await gitlabResponse.json();
-        const gitlabBuildsWithIcon = gitlabData.map((build) => ({ ...build, icon: 'gitlab' }));
-        allBuilds.push(...gitlabBuildsWithIcon);
+        const data = await response.json();
+        console.log("Url: ",urlgit)
+        const buildsWithIcon = data.workflow_runs.map((build => ({ ...build, icon: 'gitlab' })));
+        allBuilds.push(...buildsWithIcon);
       }
-    
       setBuilds(allBuilds);
     };
     
@@ -119,7 +119,7 @@ function Builds({ navigation }) {
   
     const renderSectionHeader = ({ section: { title, data } }) => (
       <View style={{ flexDirection: 'row', alignItems: 'center', margin: 10 }}>
-        <Icon name={data[0].icon === 'github-square' ? 'github-square' : 'gitlab'} size={20} color="#000000" />
+        <Icon name={data[0].icon === 'github-square' ? 'github-square' : 'gitlab'} size={20} color={colors.text} />
         <Text style={[styles.header, { color: colors.text }]}>{title}</Text>
       </View>
     );
