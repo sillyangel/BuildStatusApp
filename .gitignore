@@ -3,6 +3,7 @@
 # dependencies
 node_modules/
 
+
 # Expo
 .expo/
 dist/
@@ -37,3 +38,8 @@ config.js
 config.js
 config.mjs
 .env
+
+# Android/Ios build
+android/
+ios/
+```
