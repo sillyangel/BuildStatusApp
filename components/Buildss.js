@@ -8,11 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import { githubtoken, altassiantoken, gitlabtoken } from '@env';
 
-console.log(githubtoken)
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+console.log("------------------------------------");
 
 function Builds({ navigation }) {
     const { colors } = useTheme();
@@ -35,7 +31,6 @@ function Builds({ navigation }) {
       const username = await AsyncStorage.getItem('githubUsername');
       let selectedRepos = await AsyncStorage.getItem('githubRepos');
       selectedRepos = selectedRepos ? JSON.parse(selectedRepos) : [];
-      console.log("Selected Repos: ",selectedRepos)
       const allBuilds = [];
       for (const repo of selectedRepos) {
         const urlgit = `https://api.github.com/repos/${username}/${repo}/actions/runs`;
@@ -46,12 +41,11 @@ function Builds({ navigation }) {
           },
         });
         const data = await response.json();
-        console.log("Url: ",urlgit)
         const buildsWithIcon = data.workflow_runs.map((build => ({ ...build, icon: 'github-square' })));
         allBuilds.push(...buildsWithIcon);
       }
-  
-      setBuilds(allBuilds);
+      console.log("Fetched GitHub Builds");
+      return allBuilds;
     };
     
     
@@ -59,7 +53,6 @@ function Builds({ navigation }) {
       const username = await AsyncStorage.getItem('githubUsername');
       let selectedRepos = await AsyncStorage.getItem('githubRepos');
       selectedRepos = selectedRepos ? JSON.parse(selectedRepos) : [];
-      console.log("Selected Repos: ",selectedRepos)
       const allBuilds = [];
       for (const repo of selectedRepos) {
         const urlgit = `https://api.github.com/repos/${username}/sillyangel.github.io/actions/runs`;
@@ -70,11 +63,11 @@ function Builds({ navigation }) {
           },
         });
         const data = await response.json();
-        console.log("Url: ",urlgit)
-        const buildsWithIcon = data.workflow_runs.map((build => ({ ...build, icon: 'gitlab' })));
+        const buildsWithIcon = data.workflow_runs.map((build => ({ ...build, icon: 'gitlab-sqaure' })));
         allBuilds.push(...buildsWithIcon);
       }
-      setBuilds(allBuilds);
+      console.log("Fetched GitLab Builds");
+      return allBuilds;
     };
     
 
